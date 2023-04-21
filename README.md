@@ -134,29 +134,20 @@ Savings:                    €2674.44
 
 ### Docker
 
-Alternatively you can run the script in docker.
+The docker image bundles the chromium browser and webdriver so you don't need to setup yourself.
 
-To build the image run:
-
-```
-docker build -t udemy_enroller .
-```
-
-After the build is finished you can run your container with one of the commands below (you can pass arguments as you would in the cli):
+The easiest way to start running the enroller is to create a .env file like the following:
 
 ```
-docker run -it udemy_enroller 
+UDEMY_ENV=y
+UDEMY_CATEGORIES=development
+UDEMY_EMAIL=test@example.com
+UDEMY_LANGUAGES=English,French
+UDEMY_PASSWORD=insertyourpasswordhere
+UDEMY_ZIPCODE=
 ```
 
-After you entered your login credentials and settings detach from the interactive mode by pressing the `Ctrl-P` followed by `Ctrl-Q`.
-
-You can also create a `settings.yaml` file from the `sample_settings.yaml` and mount to the container with the command:
-
-```
-docker run -v $(pwd)/settings.yaml:/home/enroller/.udemy_enroller/settings.yaml udemy_enroller 
-```
-
-
+Then run `docker run --env-file .env hinryd/auto-udemy-enroller`
 
 ---
 
