@@ -30,6 +30,7 @@ class Settings:
         self._should_store_email = False
         self._should_store_password = False
         self.is_ci_build = strtobool(os.environ.get("CI_TEST", "False"))
+        self.is_env_file = strtobool(os.environ.get("UDEMY_ENV", "False"))
         if delete_settings:
             self.delete_settings()
         if delete_cookie:
@@ -44,6 +45,8 @@ class Settings:
         """
         if self.is_ci_build:
             self._load_ci_settings()
+        elif self.is_env_file:
+            self._load_env_settings()
         else:
             settings = self._load_user_settings()
             if settings is None:
@@ -81,6 +84,29 @@ class Settings:
             self.categories = udemy_settings.get("categories")
 
         return settings
+
+    def _load_env_settings(self) -> None:
+        logger.info("Loading settings from environment variables")
+
+        if not os.environ.get("UDEMY_EMAIL"):
+            raise ValueError("UDEMY_EMAIL environment variables must be set")
+        if not os.environ.get("UDEMY_PASSWORD"):
+            raise ValueError("UDEMY_PASSWORD environment variable must be set")
+        # if not os.environ.get("UDEMY_ZIPCODE"):
+        #     raise ValueError("UDEMY_ZIPCODE environment variable must be set")
+        # if not os.environ.get("UDEMY_LANGUAGES"):
+        #     raise ValueError("UDEMY_LANGUAGES environment variable must be set")
+        # if not os.environ.get("UDEMY_CATEGORIES"):
+        #     raise ValueError("UDEMY_CATEGORIES environment variable must be set")
+
+        self.email, self._should_store_email = os.environ.get("UDEMY_EMAIL"), False
+        self.password, self._should_store_password = (
+            os.environ.get("UDEMY_PASSWORD"),
+            False,
+        )
+        self.zip_code = os.environ.get("UDEMY_ZIPCODE")
+        self.languages = os.environ.get("UDEMY_LANGUAGES").split(",")
+        self.categories = os.environ.get("UDEMY_CATEGORIES").split(",")
 
     def _generate_settings(self) -> None:
         """
